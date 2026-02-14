@@ -5,7 +5,7 @@
   {% for entry in entries %}
   <li>
     <a href="/{{ entry.path }}" class="{{ 'dir' if entry.is_dir else 'file' }}">
-      <span class="icon">{{ '&#128193;' if entry.is_dir else '&#128196;' }}</span>
+      <span class="icon">{{ '\U0001F4C1' if entry.is_dir else '\U0001F4C4' }}</span>
       <span>{{ entry.name }}</span>
     </a>
   </li>
