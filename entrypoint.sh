@@ -6,6 +6,10 @@ REPO_DIR="${DOTVIEW_REPO_DIR:-/data/repo}"
 BRANCH="${DOTVIEW_BRANCH:-main}"
 PULL_INTERVAL="${DOTVIEW_PULL_INTERVAL:-300}"
 
+log() {
+  echo "[$(date -u '+%Y-%m-%d %H:%M:%S UTC')] $*"
+}
+
 # Set up git auth if token provided
 if [ -n "$DOTVIEW_GIT_TOKEN" ]; then
   # Works for GitHub: https://<token>@github.com/user/repo
@@ -16,12 +20,17 @@ fi
 
 # Initial clone or pull
 if [ ! -d "$REPO_DIR/.git" ]; then
-  echo "Cloning $REPO_URL (branch: $BRANCH)..."
+  log "Cloning $REPO_URL (branch: $BRANCH)..."
   git clone --branch "$BRANCH" --single-branch "$AUTHED_URL" "$REPO_DIR"
+  log "Clone complete."
 else
-  echo "Repo exists, pulling latest..."
+  log "Repo exists, pulling latest..."
   cd "$REPO_DIR"
-  git pull origin "$BRANCH" || echo "Pull failed, continuing with existing data"
+  if git pull origin "$BRANCH"; then
+    log "Pull complete."
+  else
+    log "ERROR: Pull failed, continuing with existing data" >&2
+  fi
 fi
 
 # Background pull loop
@@ -29,10 +38,12 @@ fi
   while true; do
     sleep "$PULL_INTERVAL"
     cd "$REPO_DIR"
-    git pull origin "$BRANCH" 2>&1 | grep -v "Already up to date" || true
+    if ! git pull origin "$BRANCH" 2>&1 | grep -qv "Already up to date"; then
+      true  # suppress "Already up to date" noise
+    fi
   done
 ) &
 
 # Start the server
 cd /app
-exec flask --app app run --host 0.0.0.0 --port 8080
+exec .venv/bin/gunicorn --bind 0.0.0.0:8080 app:app
