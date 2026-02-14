@@ -34,4 +34,5 @@ fi
 ) &
 
 # Start the server
+cd /app
 exec flask --app app run --host 0.0.0.0 --port 8080
