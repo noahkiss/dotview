@@ -95,13 +95,24 @@
       transition: transform 0.1s;
     }
     .tree-item > details[open] > summary .chevron { transform: rotate(90deg); }
-    .tree-item > details > summary .icon { color: var(--accent); flex-shrink: 0; }
+    .tree-item > details > summary .icon,
+    .tree-link .icon,
+    .file-list .icon,
+    .dir-heading .icon {
+      width: 1.2em;
+      text-align: center;
+      flex-shrink: 0;
+      font-style: normal;
+      font-family: monospace;
+      display: inline-block;
+    }
+    .tree-item > details > summary .icon { color: var(--accent); }
     .tree-link {
       display: flex;
       align-items: center;
       gap: 0.4rem;
       padding: 0.2rem 0.75rem;
-      padding-left: calc(0.75rem + 1em + 0.4rem); /* align with dir names (chevron space) */
+      padding-left: calc(0.75rem + 1em + 0.4rem);
       font-family: monospace;
       font-size: 0.8rem;
       color: var(--text-main);
@@ -110,7 +121,7 @@
     }
     .tree-link:hover { background: var(--surface-2); }
     .tree-link.active { background: var(--surface-2); color: var(--accent); }
-    .tree-link .icon { color: var(--text-muted); flex-shrink: 0; }
+    .tree-link .icon { color: var(--text-muted); }
     .tree-link .size {
       margin-left: auto;
       color: var(--text-muted);
@@ -144,9 +155,8 @@
       font-family: monospace;
       font-size: 0.9rem;
     }
+    .file-list a { text-decoration: none !important; }
     .file-list a:hover { background: var(--surface-2); }
-    .file-list .icon { width: 1.2em; text-align: center; flex-shrink: 0; }
-    .file-list .dir .icon { color: var(--accent); }
     .file-list .file .icon { color: var(--text-muted); }
     .file-list .size {
       margin-left: auto;
@@ -292,7 +302,7 @@
             <details{{ ' open' if node.expanded }} data-path="{{ node.path }}">
               <summary>
                 <span class="chevron">&#9654;</span>
-                <span class="icon">&#128193;</span>
+                <span class="icon">/</span>
                 <a href="/{{ node.path }}" style="color:inherit;text-decoration:none;flex:1">{{ node.name }}</a>
               </summary>
               {% if node.children %}
@@ -301,7 +311,7 @@
             </details>
             {% else %}
             <a href="/{{ node.path }}" class="tree-link{{ ' active' if node.path == current_path }}">
-              <span class="icon">&#128196;</span>
+              <span class="icon">~</span>
               <span>{{ node.name }}</span>
               {% if node.size is defined %}<span class="size">{{ node.size|filesizeformat }}</span>{% endif %}
             </a>
@@ -352,14 +362,14 @@
           if (node.is_dir) {
             const det = document.createElement('details');
             det.dataset.path = node.path;
-            det.innerHTML = '<summary><span class="chevron">&#9654;</span><span class="icon">&#128193;</span><a href="/' + node.path + '" style="color:inherit;text-decoration:none;flex:1">' + node.name + '</a></summary>';
+            det.innerHTML = '<summary><span class="chevron">&#9654;</span><span class="icon">/</span><a href="/' + node.path + '" style="color:inherit;text-decoration:none;flex:1">' + node.name + '</a></summary>';
             li.appendChild(det);
           } else {
             const a = document.createElement('a');
             a.href = '/' + node.path;
             a.className = 'tree-link';
             let sizeHtml = node.size != null ? '<span class="size">' + formatSize(node.size) + '</span>' : '';
-            a.innerHTML = '<span class="icon">&#128196;</span><span>' + node.name + '</span>' + sizeHtml;
+            a.innerHTML = '<span class="icon">~</span><span>' + node.name + '</span>' + sizeHtml;
             li.appendChild(a);
           }
           ul.appendChild(li);

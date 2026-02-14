@@ -7,7 +7,7 @@
   <li>
     {% if node.is_dir %}
     <div class="dir-heading">
-      <span class="icon" style="color: var(--accent)">&#128193;</span>
+      <span class="icon" style="color: var(--accent)">/</span>
       <a href="/{{ node.path }}">{{ node.name }}/</a>
     </div>
     {% if node.children %}
@@ -15,7 +15,7 @@
     {% endif %}
     {% else %}
     <a href="/{{ node.path }}" class="file">
-      <span class="icon">&#128196;</span>
+      <span class="icon">~</span>
       <span>{{ node.name }}</span>
       {% if node.size is defined %}<span class="size">{{ node.size|filesizeformat }}</span>{% endif %}
     </a>
