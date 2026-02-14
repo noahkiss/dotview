@@ -1,0 +1,8 @@
+[project]
+name = "dotview"
+version = "0.1.0"
+description = "Lightweight read-only file browser for git repos with syntax highlighting"
+requires-python = ">=3.13"
+dependencies = [
+    "flask>=3.1.2",
+]

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{{ filename }} — dotview{% endblock %}
+{% block content %}
+<div class="file-header">
+  <h2>{{ filename }}</h2>
+</div>
+<pre><code class="language-{{ lang }}">{{ content }}</code></pre>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+{% endblock %}

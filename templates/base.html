@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}dotview{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/catppuccin-mocha.min.css">
+  <style>
+    :root {
+      --pico-font-size: 87.5%;
+    }
+    body { padding: 1.5rem 0; }
+    nav.breadcrumb {
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+      font-family: monospace;
+    }
+    nav.breadcrumb a { color: #89b4fa; }
+    nav.breadcrumb span { color: #6c7086; }
+    .file-list { list-style: none; padding: 0; }
+    .file-list li { margin: 0; }
+    .file-list a {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.45rem 0.75rem;
+      text-decoration: none;
+      color: #cdd6f4;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+    .file-list a:hover { background: #313244; }
+    .file-list .icon { width: 1.2em; text-align: center; flex-shrink: 0; }
+    .file-list .dir .icon { color: #89b4fa; }
+    .file-list .file .icon { color: #6c7086; }
+    pre code {
+      font-size: 0.82rem !important;
+      line-height: 1.5;
+    }
+    .file-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      font-family: monospace;
+    }
+    .file-header h2 {
+      font-size: 1rem;
+      margin: 0;
+      color: #cdd6f4;
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <main class="container">
+    <nav class="breadcrumb">
+      {% for crumb in crumbs %}
+        {% if not loop.last %}
+          <a href="/{{ crumb.path }}">{{ crumb.name }}</a>
+          <span>/</span>
+        {% else %}
+          <span>{{ crumb.name }}</span>
+        {% endif %}
+      {% endfor %}
+    </nav>
+    {% block content %}{% endblock %}
+  </main>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

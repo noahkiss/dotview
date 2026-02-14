@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}{{ current or "root" }} — dotview{% endblock %}
+{% block content %}
+<ul class="file-list">
+  {% for entry in entries %}
+  <li>
+    <a href="/{{ entry.path }}" class="{{ 'dir' if entry.is_dir else 'file' }}">
+      <span class="icon">{{ '&#128193;' if entry.is_dir else '&#128196;' }}</span>
+      <span>{{ entry.name }}</span>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}
