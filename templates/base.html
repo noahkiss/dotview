@@ -153,6 +153,20 @@
       color: var(--text-muted);
       font-size: 0.8rem;
     }
+    .file-list.nested { list-style: none; }
+    .dir-heading {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.45rem 0.75rem;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+    .dir-heading a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .dir-heading a:hover { text-decoration: underline; }
 
     /* File view */
     .file-header {

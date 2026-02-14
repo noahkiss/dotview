@@ -70,26 +70,6 @@ def resolve_path(rel_path: str) -> Path:
     return full
 
 
-def get_entries(directory: Path) -> list[dict]:
-    """List directory contents, sorted dirs-first then alphabetically."""
-    entries = []
-    for item in sorted(directory.iterdir(), key=lambda p: (not p.is_dir(), p.name.lower())):
-        if item.name in SKIP_NAMES:
-            continue
-        entry = {
-            "name": item.name + ("/" if item.is_dir() else ""),
-            "is_dir": item.is_dir(),
-            "path": str(item.relative_to(REPO_DIR)),
-        }
-        if not item.is_dir():
-            try:
-                entry["size"] = item.stat().st_size
-            except OSError:
-                entry["size"] = 0
-        entries.append(entry)
-    return entries
-
-
 def get_repo_info() -> dict:
     """Get current branch and short commit hash."""
     repo = str(REPO_DIR.resolve())
@@ -108,8 +88,8 @@ def get_repo_info() -> dict:
     return info
 
 
-def build_tree(directory: Path, expand_to: Path | None = None) -> list[dict]:
-    """Build tree, expanding only along the path to expand_to."""
+def build_tree(directory: Path, expand_to: Path | None = None, expand_all: bool = False) -> list[dict]:
+    """Build tree. expand_all=True recurses into every directory."""
     entries = []
     for item in sorted(directory.iterdir(), key=lambda p: (not p.is_dir(), p.name.lower())):
         if item.name in SKIP_NAMES:
@@ -121,8 +101,10 @@ def build_tree(directory: Path, expand_to: Path | None = None) -> list[dict]:
             "is_dir": item.is_dir(),
         }
         if item.is_dir():
-            # Expand if this directory is an ancestor of the target path
-            if expand_to and (item == expand_to or str(expand_to.resolve()).startswith(str(item.resolve()) + "/")):
+            if expand_all:
+                node["children"] = build_tree(item, expand_all=True)
+                node["expanded"] = True
+            elif expand_to and (item == expand_to or str(expand_to.resolve()).startswith(str(item.resolve()) + "/")):
                 node["children"] = build_tree(item, expand_to)
                 node["expanded"] = True
             else:
@@ -195,9 +177,9 @@ def browse(filepath: str = ""):
     repo_name = REPO_DIR.resolve().name
 
     if path.is_dir():
-        entries = get_entries(path)
+        full_tree = build_tree(path, expand_all=True)
         return render_template(
-            "tree.html", entries=entries, crumbs=crumbs, current=filepath,
+            "tree.html", full_tree=full_tree, crumbs=crumbs, current=filepath,
             tree=tree, repo_info=repo_info, repo_name=repo_name,
         )
 

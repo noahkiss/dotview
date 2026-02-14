@@ -1,17 +1,28 @@
 {% extends "base.html" %}
 {% block title %}{{ current or "root" }} — dotview{% endblock %}
 {% block content %}
-<ul class="file-list">
-  {% for entry in entries %}
+{% macro render_content_tree(nodes, depth=0) %}
+<ul class="file-list nested" style="{% if depth %}padding-left: 1.25rem{% endif %}">
+  {% for node in nodes %}
   <li>
-    <a href="/{{ entry.path }}" class="{{ 'dir' if entry.is_dir else 'file' }}">
-      <span class="icon">{{ '\U0001F4C1' if entry.is_dir else '\U0001F4C4' }}</span>
-      <span>{{ entry.name }}</span>
-      {% if not entry.is_dir and entry.size is defined %}
-      <span class="size">{{ entry.size|filesizeformat }}</span>
-      {% endif %}
+    {% if node.is_dir %}
+    <div class="dir-heading">
+      <span class="icon" style="color: var(--accent)">&#128193;</span>
+      <a href="/{{ node.path }}">{{ node.name }}/</a>
+    </div>
+    {% if node.children %}
+    {{ render_content_tree(node.children, depth + 1) }}
+    {% endif %}
+    {% else %}
+    <a href="/{{ node.path }}" class="file">
+      <span class="icon">&#128196;</span>
+      <span>{{ node.name }}</span>
+      {% if node.size is defined %}<span class="size">{{ node.size|filesizeformat }}</span>{% endif %}
     </a>
+    {% endif %}
   </li>
   {% endfor %}
 </ul>
+{% endmacro %}
+{{ render_content_tree(full_tree) }}
 {% endblock %}
