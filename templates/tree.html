@@ -7,6 +7,9 @@
     <a href="/{{ entry.path }}" class="{{ 'dir' if entry.is_dir else 'file' }}">
       <span class="icon">{{ '\U0001F4C1' if entry.is_dir else '\U0001F4C4' }}</span>
       <span>{{ entry.name }}</span>
+      {% if not entry.is_dir and entry.size is defined %}
+      <span class="size">{{ entry.size|filesizeformat }}</span>
+      {% endif %}
     </a>
   </li>
   {% endfor %}

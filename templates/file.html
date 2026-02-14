@@ -3,10 +3,31 @@
 {% block content %}
 <div class="file-header">
   <h2>{{ filename }}</h2>
+  <span class="meta">{{ file_size|filesizeformat }}{% if line_count %} · {{ line_count }} lines{% endif %}</span>
 </div>
-<pre><code class="language-{{ lang }}">{{ content }}</code></pre>
+<div class="code-wrapper">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  {% if line_count %}
+  <div class="code-with-lines">
+    <div class="line-numbers">{% for i in range(1, line_count + 1) %}{{ i }}
+{% endfor %}</div>
+    <pre><code class="language-{{ lang }}">{{ content }}</code></pre>
+  </div>
+  {% else %}
+  <pre><code class="language-{{ lang }}">{{ content }}</code></pre>
+  {% endif %}
+</div>
 {% endblock %}
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
-<script>hljs.highlightAll();</script>
+<script>
+hljs.highlightAll();
+function copyCode(btn) {
+  const code = btn.closest('.code-wrapper').querySelector('code');
+  navigator.clipboard.writeText(code.textContent).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+</script>
 {% endblock %}
